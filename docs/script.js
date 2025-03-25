@@ -8,7 +8,7 @@ function connect() {
         return;
     }
 
-    socket = new WebSocket(`ws://localhost:10000/ws/${username}`);
+    socket = new WebSocket(`wss://whatsapp4.onrender.com/ws/${username}`);
 
     socket.onopen = () => {
         console.log("Conectado ao WebSocket!");
