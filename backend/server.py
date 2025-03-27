@@ -22,14 +22,11 @@ app = FastAPI()
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://whatsapp4.onrender.com",
-        "http://localhost:5500",  # Para desenvolvimento local
-        "http://127.0.0.1:5500"   # Para desenvolvimento local
-    ],
+    allow_origins=["*"],  # Em produção, restrinja aos seus domínios
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_websockets=True  # ESSENCIAL para conexões WebSocket
 )
 # Server settings
 UPLOAD_DIR = "uploads"
