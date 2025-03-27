@@ -68,7 +68,8 @@ async def websocket_endpoint(websocket: WebSocket, username: str, room: str):
                 _, target, msg = data.split(":", 2)
                 await manager.send_private(username, target, msg, room)
             else:
-                await manager.broadcast(room, f"{username}: {data}")  # Removido o exclude
+                # Envia a mensagem para TODOS, incluindo o remetente
+                await manager.broadcast(room, f"{username}: {data}")
     except WebSocketDisconnect:
         await manager.disconnect(room, username)
 
