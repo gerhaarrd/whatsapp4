@@ -26,42 +26,17 @@ class ChatApp {
         }
 
         try {
-            // Conexão direta com o Render
+            // Conexão direta com o servidor WebSocket
             this.socket = new WebSocket(`wss://whatsapp4.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`);
 
-            // Configuração robusta de conexão
-            const connectionTimeout = setTimeout(() => {
-                if (this.socket.readyState !== WebSocket.OPEN) {
-                    this.socket.close();
-                    this.addSystemMessage("Connection timeout", true);
-                }
-            }, 5000);
-
-            this.socket.onopen = () => {
-                clearTimeout(connectionTimeout);
-                this.handleConnectionOpen();
-            };
-
-            this.socket.onerror = (error) => {
-                clearTimeout(connectionTimeout);
-                this.handleConnectionError(error);
-                // Tentativa de reconexão
-                setTimeout(() => this.connect(), 3000);
-            };
-
-            this.socket.onclose = (event) => {
-                clearTimeout(connectionTimeout);
-                this.handleConnectionClose(event);
-            };
-
-            this.socket.onmessage = (event) => {
-                this.processMessage(event.data);
-            };
+            this.socket.onopen = () => this.handleConnectionOpen();
+            this.socket.onerror = (error) => this.handleConnectionError(error);
+            this.socket.onclose = (event) => this.handleConnectionClose(event);
+            this.socket.onmessage = (event) => this.processMessage(event.data);
 
         } catch (error) {
             console.error("Connection error:", error);
             alert("Connection error");
-            setTimeout(() => this.connect(), 3000);
         }
     }
 
@@ -70,18 +45,19 @@ class ChatApp {
         document.getElementById("chat").style.display = "flex";
         document.getElementById("roomName").textContent = this.currentRoom;
         this.chatMessages.innerHTML = '';
-        
         this.addSystemMessage(`Welcome to room ${this.currentRoom}, ${this.username}!`);
     }
 
     handleConnectionError(error) {
         console.error("Connection error:", error);
         this.addSystemMessage("Connection error", true);
+        // Tentar reconectar após 3 segundos
+        setTimeout(() => this.connect(), 3000);
     }
 
     handleConnectionClose(event) {
         if (!event.wasClean) {
-            this.addSystemMessage("Reconnecting...");
+            this.addSystemMessage("Connection lost. Reconnecting...");
             setTimeout(() => this.connect(), 3000);
         }
     }
@@ -93,42 +69,20 @@ class ChatApp {
         }
 
         const messageElement = document.createElement("div");
-        
+
         if (msg.match(/^(👥|🚀|👋|⚠️|🚨)/)) {
             messageElement.className = "system-message";
             messageElement.textContent = msg;
-        }
-        else if (msg.startsWith("img:")) {
-            this.handleImageMessage(msg, messageElement);
-        }
-        else if (msg.startsWith("🔒")) {
+        } else if (msg.startsWith("🔒")) {
             messageElement.className = "private-message";
             messageElement.textContent = msg;
-        }
-        else {
+        } else {
             messageElement.className = msg.includes(this.username) ? "receiver" : "sender";
             messageElement.textContent = msg;
         }
 
         this.chatMessages.appendChild(messageElement);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-    }
-
-    handleImageMessage(msg, container) {
-        const imgUrl = msg.slice(4);
-        const sender = imgUrl.split('_')[0];
-        
-        container.className = "message-container";
-        const img = document.createElement("img");
-        img.className = "chat-image";
-        img.onerror = () => {
-            img.src = 'images/image-error.png';
-            img.alt = 'Image failed to load';
-        };
-        img.src = `https://whatsapp4.onrender.com${imgUrl}`;
-        
-        container.innerHTML = `<div class="image-sender">${sender === this.username ? "You" : sender}</div>`;
-        container.appendChild(img);
     }
 
     addSystemMessage(text, isError = false) {
@@ -142,9 +96,9 @@ class ChatApp {
     sendMessage() {
         const input = document.getElementById("message");
         const message = input.value.trim();
-        
+
         if (!message || !this.socket || this.socket.readyState !== WebSocket.OPEN) return;
-        
+
         try {
             this.socket.send(message);
             input.value = "";
@@ -157,7 +111,7 @@ class ChatApp {
     sendPrivateMessage() {
         const input = document.getElementById("message");
         const message = input.value.trim();
-        
+
         if (!message) {
             alert("Please enter a message!");
             return;
@@ -168,43 +122,6 @@ class ChatApp {
 
         this.socket.send(`privado:${recipient}:${message}`);
         input.value = "";
-    }
-
-    async sendImage() {
-        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-            alert("Please connect first");
-            return;
-        }
-
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        
-        input.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            try {
-                const formData = new FormData();
-                formData.append("file", file);
-
-                const response = await fetch(
-                    `https://whatsapp4.onrender.com/upload/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`, 
-                    { method: "POST", body: formData }
-                );
-
-                if (!response.ok) throw new Error("Upload failed");
-                
-                const result = await response.json();
-                this.socket.send(`img:${result.url}`);
-
-            } catch (error) {
-                console.error("Upload error:", error);
-                this.addSystemMessage("Image upload failed", true);
-            }
-        };
-        
-        input.click();
     }
 
     updateUserList(userList) {
@@ -244,5 +161,5 @@ class ChatApp {
     }
 }
 
-// Initialize chat application
+// Inicializa a aplicação de chat
 const chat = new ChatApp();

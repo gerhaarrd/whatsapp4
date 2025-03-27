@@ -5,6 +5,7 @@
     font-family: 'Arial', sans-serif;
 }
 
+/* Ajustes gerais */
 body {
     background-color: #1a1a2e;
     display: flex;
@@ -12,30 +13,30 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    padding: 10px;
+    padding: 10px; /* Adicionado para evitar que o conteúdo encoste nas bordas */
 }
 
 #app {
     width: 100%;
-    max-width: 500px;
+    max-width: 500px; /* Aumentado para melhorar a visualização */
     background-color: #2e2e3e;
     border-radius: 10px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
     padding: 20px;
-    overflow: hidden;
+    overflow: hidden; /* Evita que elementos saiam do contêiner */
 }
 
 .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 15px; /* Adicionado para espaçamento entre elementos */
 }
 
 h2 {
     color: #d4b3ff;
     margin-bottom: 20px;
-    text-align: center;
+    text-align: center; /* Centralizado para melhor estética */
 }
 
 .input-field {
@@ -46,7 +47,7 @@ h2 {
     border: 1px solid #5a5a8e;
     background-color: #1f1f2e;
     color: #d4b3ff;
-    font-size: 14px;
+    font-size: 14px; /* Ajustado para melhor legibilidade */
 }
 
 .btn {
@@ -57,8 +58,8 @@ h2 {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    font-size: 14px;
-    width: 100%;
+    font-size: 14px; /* Ajustado para consistência */
+    width: 100%; /* Botões ocupam toda a largura */
     text-align: center;
 }
 
@@ -79,7 +80,7 @@ h2 {
     display: flex;
     align-items: center;
     margin: 0;
-    font-size: 18px;
+    font-size: 18px; /* Ajustado para melhor visualização */
 }
 
 #chatHeader .logo {
@@ -89,16 +90,27 @@ h2 {
 }
 
 #chatHeader .btn {
-    padding: 5px 10px;
-    font-size: 12px;
-    width: auto;
-    flex-shrink: 0;
+    padding: 5px 10px; /* Reduz o tamanho interno do botão */
+    font-size: 12px; /* Diminui o tamanho da fonte */
+    width: auto; /* Remove a largura total */
+    flex-shrink: 0; /* Garante que o botão não encolha */
+}
+
+#chatMessages {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #1f1f2e;
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
 
 .chat-messages {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 8px; /* Espaçamento entre mensagens */
     max-height: 300px;
     overflow-y: auto;
     padding: 10px;
@@ -109,23 +121,23 @@ h2 {
 }
 
 .chat-messages .sender {
-    align-self: flex-start;
+    align-self: flex-start; /* Alinha mensagens enviadas à esquerda */
     background-color: #a64ac9;
     color: white;
     padding: 8px;
     border-radius: 8px;
-    max-width: 80%;
+    max-width: 80%; /* Limita a largura das mensagens */
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
 
 .chat-messages .receiver {
-    align-self: flex-end;
+    align-self: flex-end; /* Alinha mensagens recebidas à direita */
     background-color: #802ecc;
     color: white;
     padding: 8px;
     border-radius: 8px;
-    max-width: 80%;
+    max-width: 80%; /* Limita a largura das mensagens */
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -159,7 +171,7 @@ h2 {
 #messageInputArea {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 10px; /* Espaçamento entre textarea e botões */
     width: 100%;
 }
 
@@ -172,19 +184,19 @@ h2 {
     color: #d4b3ff;
     padding: 10px;
     font-size: 14px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: pre-wrap;
+    word-wrap: break-word; /* Garante que o texto quebre a linha */
+    overflow-wrap: break-word; /* Compatibilidade adicional */
+    white-space: pre-wrap; /* Mantém quebras de linha e permite quebra automática */
 }
 
 #buttonArea {
     display: flex;
-    gap: 10px;
+    gap: 10px; /* Espaçamento entre os botões */
     width: 100%;
 }
 
 #buttonArea button {
-    flex: 1;
+    flex: 1; /* Botões ocupam o mesmo espaço */
     background-color: #6900af;
     color: #fff;
     border: none;
@@ -229,6 +241,7 @@ h2 {
     margin-left: 10px;
 }
 
+/* Mensagens de sistema */
 .system-message {
     color: #a0a0a0;
     font-size: 0.9em;
@@ -236,6 +249,7 @@ h2 {
     margin: 5px 0;
 }
 
+/* Imagens */
 .chat-image {
     max-width: 200px;
     border-radius: 8px;
@@ -248,6 +262,7 @@ h2 {
     color: #d4b3ff;
 }
 
+/* Mensagens privadas */
 .private-message {
     background-color: #4a2a6b !important;
     color: white;
@@ -255,6 +270,7 @@ h2 {
     padding-left: 5px;
 }
 
+/* Usuários online clicáveis */
 .online-user {
     cursor: pointer;
     transition: background 0.3s;
@@ -271,4 +287,10 @@ h2 {
     padding: 8px;
     border-radius: 8px;
     background-color: #3a3a5e;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
