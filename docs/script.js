@@ -8,12 +8,22 @@ class ChatApp {
     }
 
     setupEventListeners() {
+        // Connect button
+        document.getElementById("connectButton").addEventListener("click", () => this.connect());
+        
+        // Message input
         document.getElementById("message").addEventListener("keypress", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 this.sendMessage();
             }
         });
+
+        // Private message button
+        document.getElementById("privateButton").addEventListener("click", () => this.sendPrivateMessage());
+        
+        // Logout button
+        document.getElementById("logoutButton").addEventListener("click", () => this.logout());
     }
 
     connect() {
@@ -21,12 +31,18 @@ class ChatApp {
         this.currentRoom = document.getElementById("room").value.trim() || "public";
 
         if (!this.username) {
-            alert("Por favor, digite um nome de usuário válido!");
+            alert("Please enter a valid username!");
             return;
         }
 
         try {
-            this.socket = new WebSocket(`wss://whatsapp4.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`);
+            this.socket = new WebSocket(
+                `wss://whatsapp4.onrender.com/ws/${
+                    encodeURIComponent(this.username)
+                }/${
+                    encodeURIComponent(this.currentRoom)
+                }`
+            );
 
             this.socket.onopen = () => this.handleConnectionOpen();
             this.socket.onerror = (error) => this.handleConnectionError(error);
@@ -34,8 +50,8 @@ class ChatApp {
             this.socket.onmessage = (event) => this.processMessage(event.data);
 
         } catch (error) {
-            console.error("Erro de conexão:", error);
-            this.addSystemMessage("Erro na conexão", true);
+            console.error("Connection error:", error);
+            this.addSystemMessage("Connection error", true);
         }
     }
 
@@ -44,18 +60,18 @@ class ChatApp {
         document.getElementById("chat").style.display = "flex";
         document.getElementById("roomName").textContent = this.currentRoom;
         this.chatMessages.innerHTML = '';
-        this.addSystemMessage(`Bem-vindo à sala ${this.currentRoom}, ${this.username}!`);
+        this.addSystemMessage(`Welcome to room ${this.currentRoom}, ${this.username}!`);
     }
 
     handleConnectionError(error) {
-        console.error("Erro de conexão:", error);
-        this.addSystemMessage("Erro na conexão. Tentando reconectar...", true);
+        console.error("Connection error:", error);
+        this.addSystemMessage("Connection error. Reconnecting...", true);
         setTimeout(() => this.connect(), 3000);
     }
 
     handleConnectionClose(event) {
         if (!event.wasClean) {
-            this.addSystemMessage("Conexão perdida. Reconectando...");
+            this.addSystemMessage("Connection lost. Reconnecting...");
             setTimeout(() => this.connect(), 3000);
         }
     }
@@ -101,8 +117,8 @@ class ChatApp {
             this.socket.send(message);
             input.value = "";
         } catch (error) {
-            console.error("Erro ao enviar:", error);
-            this.addSystemMessage("Falha ao enviar mensagem", true);
+            console.error("Send error:", error);
+            this.addSystemMessage("Message send failed", true);
         }
     }
 
@@ -111,17 +127,17 @@ class ChatApp {
         const message = input.value.trim();
 
         if (!message) {
-            alert("Por favor, digite uma mensagem!");
+            alert("Please enter a message!");
             return;
         }
 
         const onlineUsers = this.getOnlineUsers();
         if (!onlineUsers) {
-            alert("Nenhum usuário online no momento");
+            alert("No online users available");
             return;
         }
 
-        const recipient = prompt(`Enviar privado para:\n(Online: ${onlineUsers})`);
+        const recipient = prompt(`Send private to:\n(Online: ${onlineUsers})`);
         if (!recipient) return;
 
         this.socket.send(`privado:${recipient}:${message}`);
@@ -132,10 +148,10 @@ class ChatApp {
         const users = userListStr ? userListStr.split(", ") : [];
         const userListElement = document.getElementById("userList");
         userListElement.innerHTML = `
-            <h3>Usuários Online 👥 <small>(${users.length})</small></h3>
+            <h3>Online Users 👥 <small>(${users.length})</small></h3>
             ${users.map(user => `
-                <div class="online-user" onclick="chat.setPrivateMessage('${user}')">
-                    ${user} ${user === this.username ? '(você)' : ''}
+                <div class="online-user" onclick="window.chat.setPrivateMessage('${user}')">
+                    ${user} ${user === this.username ? '(you)' : ''}
                 </div>
             `).join('')}
         `;
@@ -150,13 +166,13 @@ class ChatApp {
 
     getOnlineUsers() {
         const users = Array.from(document.querySelectorAll('.online-user'))
-            .map(el => el.textContent.trim().replace(' (você)', ''));
+            .map(el => el.textContent.trim().replace(' (you)', ''));
         return users.filter(u => u !== this.username).join(', ');
     }
 
     logout() {
         if (this.socket) {
-            this.socket.close(1000, "Logout do usuário");
+            this.socket.close(1000, "User logout");
         }
         document.getElementById("chat").style.display = "none";
         document.getElementById("telaLogin").style.display = "block";
@@ -165,4 +181,5 @@ class ChatApp {
     }
 }
 
-const chat = new ChatApp();
+// Initialize as global variable
+window.chat = new ChatApp();
