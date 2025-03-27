@@ -27,34 +27,29 @@ class ChatApp {
     }
 
     connect() {
-    this.username = document.getElementById("username").value.trim();
-    this.currentRoom = document.getElementById("room").value.trim() || "public";
+        this.username = document.getElementById("username").value.trim();
+        this.currentRoom = document.getElementById("room").value.trim() || "public";
 
-    if (!this.username) {
-        alert("Please enter a valid username!");
-        return;
+        if (!this.username) {
+            alert("Please enter a valid username!");
+            return;
+        }
+
+        try {
+            this.socket = new WebSocket(
+    `wss://whatsapp4.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`
+);
+
+            this.socket.onopen = () => this.handleConnectionOpen();
+            this.socket.onerror = (error) => this.handleConnectionError(error);
+            this.socket.onclose = (event) => this.handleConnectionClose(event);
+            this.socket.onmessage = (event) => this.processMessage(event.data);
+
+        } catch (error) {
+            console.error("Connection error:", error);
+            this.addSystemMessage("Connection error", true);
+        }
     }
-
-    try {
-        // Corrected WebSocket URL with proper parentheses
-        this.socket = new WebSocket(
-            `wss://whatsapp4.onrender.com/ws/${
-                encodeURIComponent(this.username)
-            }/${
-                encodeURIComponent(this.currentRoom)
-            }`
-        );
-
-        this.socket.onopen = () => this.handleConnectionOpen();
-        this.socket.onerror = (error) => this.handleConnectionError(error);
-        this.socket.onclose = (event) => this.handleConnectionClose(event);
-        this.socket.onmessage = (event) => this.processMessage(event.data);
-
-    } catch (error) {
-        console.error("Connection error:", error);
-        this.addSystemMessage("Connection error", true);
-    }
-}
 
     handleConnectionOpen() {
         document.getElementById("telaLogin").style.display = "none";
