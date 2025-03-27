@@ -21,15 +21,6 @@ Um aplicativo de chat em tempo real com salas múltiplas usando WebSocket, FastA
 - WebSockets
 - Uvicorn (ASGI server)
 
-## 🚀 Como Executar
-
-### Pré-requisitos
+###🚀 Pré-requisitos
 - Python 3.7+
 - Navegador moderno
-
-### Instalação
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/seu-usuario/chat-app.git
-cd chat-app
