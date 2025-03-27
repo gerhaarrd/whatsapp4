@@ -75,21 +75,24 @@ class ChatApp {
             this.updateUserList(msg.replace("👥 Online:", "").trim());
             return;
         }
-
+    
         const messageElement = document.createElement("div");
-
+        
         if (msg.startsWith("🔒")) {
             messageElement.className = "private-message";
             messageElement.textContent = msg;
-        } else if (msg.match(/^(🚀|👋|⚠️|🚨)/)) {
+        } else if (msg.match(/^(👥|🚀|👋|⚠️|🚨)/)) {
             messageElement.className = "system-message";
             messageElement.textContent = msg;
         } else {
-            const isCurrentUser = msg.startsWith(`${this.username}:`);
+            // Verifica se a mensagem é do usuário atual
+            const [sender, ...messageParts] = msg.split(":");
+            const isCurrentUser = sender.trim() === this.username;
+            
             messageElement.className = isCurrentUser ? "receiver" : "sender";
-            messageElement.textContent = msg;
+            messageElement.textContent = messageParts.join(":").trim();
         }
-
+    
         this.chatMessages.appendChild(messageElement);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
     }
