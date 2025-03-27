@@ -32,8 +32,6 @@ class ChatApp {
         }
 
         try {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const host = window.location.hostname || 'localhost';
             this.socket = new WebSocket(`wss://whatsapp4.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`);
 
             this.socket.onopen = () => this.handleConnectionOpen();
@@ -107,8 +105,7 @@ class ChatApp {
             img.src = 'images/image-error.png';
             img.alt = 'Image failed to load';
         };
-        img.src = imgUrl.startsWith('http') ? imgUrl 
-        : `https://whatsapp4.onrender.com${imgUrl}`;
+        img.src = `https://whatsapp4.onrender.com${imgUrl}`;
         
         container.innerHTML = `<div class="image-sender">${sender === this.username ? "You" : sender}</div>`;
         container.appendChild(img);
