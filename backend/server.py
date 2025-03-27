@@ -22,12 +22,12 @@ app = FastAPI()
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Em produção, restrinja aos seus domínios
+    allow_origins=["*"],  # Permitir todas as origens para simplificar
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_websockets=True  # ESSENCIAL para conexões WebSocket
 )
+
 # Server settings
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -192,7 +192,7 @@ async def process_and_save_image(username: str, contents: bytes, file_ext: str):
         return { 
             "status": "success",
             "url": f"/{UPLOAD_DIR}/{filename}",
-            "absolute_url": f"http://{os.getenv('SERVER_HOST', 'localhost:8000')}/{UPLOAD_DIR}/{filename}",
+            "absolute_url": f"https://whatsapp4.onrender.com/{UPLOAD_DIR}/{filename}",
             "filename": filename,
             "dimensions": {
                 "width": image.size[0],
@@ -239,4 +239,4 @@ async def send_online_users(room: str):
         await broadcast_message(f"👥 Online ({room}): {', '.join(users)}", room)
 
 if __name__ == "__main__":
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
