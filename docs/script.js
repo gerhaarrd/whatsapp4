@@ -8,21 +8,14 @@ class ChatApp {
     }
 
     setupEventListeners() {
-        // Connect button
         document.getElementById("connectButton").addEventListener("click", () => this.connect());
-        
-        // Message input
         document.getElementById("message").addEventListener("keypress", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 this.sendMessage();
             }
         });
-
-        // Private message button
         document.getElementById("privateButton").addEventListener("click", () => this.sendPrivateMessage());
-        
-        // Logout button
         document.getElementById("logoutButton").addEventListener("click", () => this.logout());
     }
 
@@ -36,9 +29,14 @@ class ChatApp {
         }
 
         try {
+            // Corrected WebSocket URL construction
             this.socket = new WebSocket(
-    `wss://whatsapp4.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`
-);
+                `wss://whatsapp4.onrender.com/ws/${
+                    encodeURIComponent(this.username)
+                }/${
+                    encodeURIComponent(this.currentRoom)
+                }`
+            );
 
             this.socket.onopen = () => this.handleConnectionOpen();
             this.socket.onerror = (error) => this.handleConnectionError(error);
@@ -177,5 +175,5 @@ class ChatApp {
     }
 }
 
-// Initialize as global variable
+// Initialize the chat application
 window.chat = new ChatApp();
