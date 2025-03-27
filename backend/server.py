@@ -35,11 +35,10 @@ class ConnectionManager:
     async def broadcast(self, room: str, message: str, exclude: str = None):
         if room in self.active_connections:
             for username, connection in self.active_connections[room].items():
-                if username != exclude:
-                    try:
-                        await connection.send_text(message)
-                    except:
-                        await self.disconnect(room, username)
+                try:
+                    await connection.send_text(message)  # Removida a condição de exclusão
+                except:
+                    await self.disconnect(room, username)
 
     async def send_private(self, sender: str, target: str, message: str, room: str):
         if room in self.active_connections:
@@ -69,7 +68,7 @@ async def websocket_endpoint(websocket: WebSocket, username: str, room: str):
                 _, target, msg = data.split(":", 2)
                 await manager.send_private(username, target, msg, room)
             else:
-                await manager.broadcast(room, f"{username}: {data}", exclude=username)
+                await manager.broadcast(room, f"{username}: {data}")  # Removido o exclude
     except WebSocketDisconnect:
         await manager.disconnect(room, username)
 
