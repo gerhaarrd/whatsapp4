@@ -3,42 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp 4</title>
+    <title>Chat App - Rooms</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="icon.png">
+    <link rel="icon" href="images/icon.png">
 </head>
 <body>
     <div id="app">
         <div id="telaLogin" class="screen">
-            <h2>Digite seu nome para entrar no chat</h2>
-            <input type="text" id="username" placeholder="Seu nome" class="input-field">
-            <button onclick="connect()" class="btn">Entrar</button>
+            <h2>Enter your name and room</h2>
+            <input type="text" id="username" placeholder="Your name" class="input-field">
+            <input type="text" id="room" placeholder="Leave empty for public room" class="input-field">
+            <button onclick="chat.connect()" class="btn">Join</button>
         </div>
 
         <div id="chat" class="screen" style="display: none;">
             <div id="chatHeader">
                 <h2>
-                    <img src="icon.png" class="logo"> WhatsApp 4
+                    <img src="images/icon.png" alt="Logo" class="logo"> 
+                    <span id="roomName"></span>
                 </h2>
-                <button onclick="logout()" class="btn">Sair</button>
+                <button onclick="chat.logout()" class="btn">Leave</button>
             </div>
 
             <div id="userList" class="user-list">
-                <h3>Usuários online 👥</h3>
+                <h3>Online Users 👥</h3>
             </div>
             
             <div id="chatMessages" class="chat-messages"></div>
 
             <div id="messageInputArea">
-                <textarea id="message" placeholder="Digite sua mensagem..." class="input-field"></textarea>
+                <textarea id="message" placeholder="Type your message..." class="input-field"></textarea>
                 <div id="buttonArea">
-                    <button onclick="sendMessage()" class="btn">Enviar Mensagem Pública</button>
-                    <button onclick="sendPrivateMessage()" class="btn">Enviar Mensagem Privada</button>
+                    <button onclick="chat.sendMessage()" class="btn">Send</button>
+                    <button onclick="chat.sendPrivateMessage()" class="btn">Private</button>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
