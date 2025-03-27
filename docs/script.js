@@ -85,7 +85,8 @@ class ChatApp {
             messageElement.className = "system-message";
             messageElement.textContent = msg;
         } else {
-            messageElement.className = msg.includes(this.username) ? "receiver" : "sender";
+            const isCurrentUser = msg.startsWith(`${this.username}:`);
+            messageElement.className = isCurrentUser ? "receiver" : "sender";
             messageElement.textContent = msg;
         }
 
