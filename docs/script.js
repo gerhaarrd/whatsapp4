@@ -14,12 +14,6 @@ class ChatApp {
                 this.sendMessage();
             }
         });
-
-        window.addEventListener('load', () => {
-            if (window.location.hostname === 'localhost') {
-                console.log("Development environment: localhost");
-            }
-        });
     }
 
     connect() {
@@ -32,16 +26,42 @@ class ChatApp {
         }
 
         try {
+            // Conexão direta com o Render
             this.socket = new WebSocket(`wss://whatsapp4.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`);
 
-            this.socket.onopen = () => this.handleConnectionOpen();
-            this.socket.onerror = (error) => this.handleConnectionError(error);
-            this.socket.onclose = (event) => this.handleConnectionClose(event);
-            this.socket.onmessage = (event) => this.processMessage(event.data);
+            // Configuração robusta de conexão
+            const connectionTimeout = setTimeout(() => {
+                if (this.socket.readyState !== WebSocket.OPEN) {
+                    this.socket.close();
+                    this.addSystemMessage("Connection timeout", true);
+                }
+            }, 5000);
+
+            this.socket.onopen = () => {
+                clearTimeout(connectionTimeout);
+                this.handleConnectionOpen();
+            };
+
+            this.socket.onerror = (error) => {
+                clearTimeout(connectionTimeout);
+                this.handleConnectionError(error);
+                // Tentativa de reconexão
+                setTimeout(() => this.connect(), 3000);
+            };
+
+            this.socket.onclose = (event) => {
+                clearTimeout(connectionTimeout);
+                this.handleConnectionClose(event);
+            };
+
+            this.socket.onmessage = (event) => {
+                this.processMessage(event.data);
+            };
 
         } catch (error) {
             console.error("Connection error:", error);
             alert("Connection error");
+            setTimeout(() => this.connect(), 3000);
         }
     }
 
