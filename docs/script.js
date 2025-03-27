@@ -27,7 +27,7 @@ class ChatApp {
 
         try {
             // Conexão direta com o servidor WebSocket
-            this.socket = new WebSocket(`wss://whatsapp4.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`);
+            this.socket = new WebSocket(`https://whatsapp4backend.onrender.com/ws/${encodeURIComponent(this.username)}/${encodeURIComponent(this.currentRoom)}`);
 
             this.socket.onopen = () => this.handleConnectionOpen();
             this.socket.onerror = (error) => this.handleConnectionError(error);
