@@ -36,20 +36,18 @@ class ConnectionManager:
         if room in self.active_connections:
             for username, connection in self.active_connections[room].items():
                 try:
-                    await connection.send_text(message)  # Removida a condição de exclusão
+                    await connection.send_text(message)
                 except:
                     await self.disconnect(room, username)
 
     async def send_private(self, sender: str, target: str, message: str, room: str):
         if room in self.active_connections:
-            # Mensagem para o destinatário
             if target in self.active_connections[room]:
                 try:
                     await self.active_connections[room][target].send_text(f"🔒 {sender} (privado): {message}")
                 except:
                     await self.disconnect(room, target)
             
-            # Confirmação para o remetente
             if sender in self.active_connections[room]:
                 try:
                     await self.active_connections[room][sender].send_text(f"🔒 Para {target}: {message}")
@@ -68,10 +66,10 @@ async def websocket_endpoint(websocket: WebSocket, username: str, room: str):
                 _, target, msg = data.split(":", 2)
                 await manager.send_private(username, target, msg, room)
             else:
-                # Envia a mensagem para TODOS, incluindo o remetente
                 await manager.broadcast(room, f"{username}: {data}")
     except WebSocketDisconnect:
         await manager.disconnect(room, username)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+
